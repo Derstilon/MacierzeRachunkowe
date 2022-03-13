@@ -10,7 +10,7 @@ void MY_MMult(double **, double **, double **, int, int);
 void copy_matrix(int, int, double **, int, double **, int );
 void random_matrix(int, int, double **, int);
 double compare_matrices( int, int, double **, int, double **, int );
-
+void print_matrix(int m, int n, double **a, int lda);
 double dclock();
 
 int main()
@@ -36,9 +36,9 @@ int main()
     n = l;
     k = l;
 
-    lda = ( LDA == -1 ? m : LDA );
-    ldb = ( LDB == -1 ? k : LDB );
-    ldc = ( LDC == -1 ? m : LDC );
+    lda = m;
+    ldb = n;
+    ldc = m;
 
     /* Allocate space for the matrices */
     /* Note: I create an extra column in A to make sure that
@@ -96,6 +96,10 @@ int main()
       else
 	dtime_best = ( dtime < dtime_best ? dtime : dtime_best );
     }
+    //print_matrix(m, n, a, lda);
+    //print_matrix(m, n, b, lda);
+    //print_matrix(m, n, c, lda);
+    //print_matrix(m, n, cref, lda);
 
     diff = compare_matrices( m, n, c, ldc, cref, ldc );
 
