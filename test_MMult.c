@@ -6,7 +6,7 @@
 #include "parameters.h"
 
 void REF_MMult(int, int, int, double **, int, double **, int, double **, int );
-void MY_MMult(double **, double **, double **, int, int);
+void MY_MMult(double **, double **, double **, int, int, long long *, long long*);
 void copy_matrix(int, int, double **, int, double **, int );
 void random_matrix(int, int, double **, int);
 double compare_matrices( int, int, double **, int, double **, int );
@@ -27,10 +27,12 @@ int main()
     diff;
 
   double 
-    **a, **b, **c, **cref, **cold;    
-  
-  printf( "MY_MMult = [\n" );
-    
+    **a, **b, **c, **cref, **cold;
+
+  long long mult_count, add_count;
+
+  printf("MY_MMult = [\n");
+
   for ( l=2; l<=pow(2, LLAST); l *=2 ){
     m = l;
     n = l;
@@ -87,7 +89,7 @@ int main()
       /* Time your implementation */
       dtime = dclock();
 
-      MY_MMult( a, b, c, l, THRESHOLD);
+      MY_MMult( a, b, c, l, THRESHOLD, &mult_count, &add_count);
       
       dtime = dclock() - dtime;
 
@@ -103,7 +105,7 @@ int main()
 
     diff = compare_matrices( m, n, c, ldc, cref, ldc );
 
-    printf( "%d %le %le \n", l, dtime_best, diff );
+    printf("%d %le %le %ld %ld \n", l, dtime_best, diff, mult_count, add_count);
     fflush( stdout );
 
     for (int i = 0; i < lda; i++) {
