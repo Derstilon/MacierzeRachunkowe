@@ -3,7 +3,7 @@ In the test driver, there is a loop "for ( p=PFIRST; p<= PLAST; p+= PINC )"
 The below parameters set this range of values that p takes on 
 */   
 #define LLAST 11
-#define THRESHOLD 2
+#define THRESHOLD 16
 /* 
 In the test driver, the m, n, and k dimensions are set to the below 
 values.  If the value equals "-1" then that dimension is bound to the

@@ -1,5 +1,3 @@
-#define A( i, j ) a[i][j]
-#define B( i, j ) b[i][j]
 
 void copy_matrix( int m, int n, double **a, int lda, double **b, int ldb )
 {
@@ -7,6 +5,6 @@ void copy_matrix( int m, int n, double **a, int lda, double **b, int ldb )
 
   for ( j=0; j<n; j++ )
     for ( i=0; i<m; i++ )
-      B( i,j ) = A( i,j );
+      b[i][j] = a[i][j];
 }
 
