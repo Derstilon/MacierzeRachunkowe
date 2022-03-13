@@ -4,7 +4,7 @@ NEW  := MMultBlock
 # sample makefile
 #
 
-CC         := gcc-11
+CC         := gcc
 LINKER     := $(CC)
 CFLAGS     := -O2 -Wall -msse3 -g
 LDFLAGS    := -lm

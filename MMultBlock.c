@@ -2,7 +2,8 @@
 
 #define MY_MCopyBlock(source, dest, blockSize, i, j, ii, jj) \
   for (int t = 0; t < blockSize; t++)                        \
-    for (int r = 0; r < blockSize; r++) dest[ii + t][jj + r] = source[i + t][j + r];
+    for (int r = 0; r < blockSize; r++)                      \
+      dest[ii + t][jj + r] = source[i + t][j + r];
 
 void MY_MSumBlock(double **a, double **b, double **c, int blockSize, int ia, int ja, int ib, int jb)
 {
@@ -105,8 +106,10 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize)
     MY_MCopyBlock(Pc[1], c, blockSize2, 0, 0, 0, blockSize2);
     MY_MCopyBlock(Pc[2], c, blockSize2, 0, 0, blockSize2, 0);
     MY_MCopyBlock(Pc[3], c, blockSize2, 0, 0, blockSize2, blockSize2);
-    for (k = 0; k < 4; k++) {
-      for (l = 0; l < 4; l++) {
+    for (k = 0; k < 4; k++)
+    {
+      for (l = 0; l < 4; l++)
+      {
         free(Pa[k][l]);
         free(Pb[k][l]);
         free(Pc[k][l]);
@@ -142,7 +145,7 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
       Pa[k] = (double **)malloc(blockSize2 * sizeof(double *));
       Pb[k] = (double **)malloc(blockSize2 * sizeof(double *));
       Pc[k] = (double **)malloc(blockSize2 * sizeof(double *));
-      for (l = 0; l < blockSize / 2; l++)
+      for (l = 0; l < blockSize2; l++)
       {
         Pa[k][l] = (double *)malloc(blockSize2 * sizeof(double));
         Pb[k][l] = (double *)malloc(blockSize2 * sizeof(double));
@@ -152,32 +155,32 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
     // copy Strassen matrices
 
     //(A11+A22) * (B11+B22)
-    MY_MSumBlock(a, a, Pa[0], blockSize, i, j, i + blockSize2, j + blockSize2);
-    MY_MSumBlock(b, b, Pb[0], blockSize, i, j, i + blockSize2, j + blockSize2);
+    MY_MSumBlock(a, a, Pa[0], blockSize2, i, j, i + blockSize2, j + blockSize2);
+    MY_MSumBlock(b, b, Pb[0], blockSize2, i, j, i + blockSize2, j + blockSize2);
 
     //(A21+A22) * B11
-    MY_MSumBlock(a, a, Pa[1], blockSize, i + blockSize2, j, i + blockSize2, j + blockSize2);
-    MY_MCopyBlock(b, Pb[1], blockSize, i, j, 0, 0);
+    MY_MSumBlock(a, a, Pa[1], blockSize2, i + blockSize2, j, i + blockSize2, j + blockSize2);
+    MY_MCopyBlock(b, Pb[1], blockSize2, i, j, 0, 0);
 
     // A11 * (B12-B22)
-    MY_MCopyBlock(a, Pa[2], blockSize, i, j + blockSize2, 0, 0);
-    MY_MSubstractBlock(b, b, Pb[2], blockSize, i, j + blockSize2, i + blockSize2, j + blockSize2);
+    MY_MCopyBlock(a, Pa[2], blockSize2, i, j + blockSize2, 0, 0);
+    MY_MSubstractBlock(b, b, Pb[2], blockSize2, i, j + blockSize2, i + blockSize2, j + blockSize2);
 
     // A22 * (B21-B11)
-    MY_MCopyBlock(a, Pa[3], blockSize, i + blockSize2, j + blockSize2, 0, 0);
-    MY_MSubstractBlock(b, b, Pb[3], blockSize, i + blockSize2, j, i, j);
+    MY_MCopyBlock(a, Pa[3], blockSize2, i + blockSize2, j + blockSize2, 0, 0);
+    MY_MSubstractBlock(b, b, Pb[3], blockSize2, i + blockSize2, j, i, j);
 
     //(A11+A12) * B22
-    MY_MSumBlock(a, a, Pa[4], blockSize, i, j, i, j + blockSize2);
-    MY_MCopyBlock(b, Pb[4], blockSize, i + blockSize2, j + blockSize2, 0, 0);
+    MY_MSumBlock(a, a, Pa[4], blockSize2, i, j, i, j + blockSize2);
+    MY_MCopyBlock(b, Pb[4], blockSize2, i + blockSize2, j + blockSize2, 0, 0);
 
     //(A21-A11) * (B11+B12)
-    MY_MSubstractBlock(a, a, Pa[5], blockSize, i + blockSize2, j, i, j);
-    MY_MSumBlock(b, b, Pb[5], blockSize, i, j, i, j + blockSize2);
+    MY_MSubstractBlock(a, a, Pa[5], blockSize2, i + blockSize2, j, i, j);
+    MY_MSumBlock(b, b, Pb[5], blockSize2, i, j, i, j + blockSize2);
 
     //(A12-A22) * (B21+B22)
-    MY_MSubstractBlock(a, a, Pa[6], blockSize, i, j + blockSize2, i + blockSize2, j + blockSize2);
-    MY_MSumBlock(b, b, Pb[6], blockSize, i + blockSize2, j, i + blockSize2, j + blockSize2);
+    MY_MSubstractBlock(a, a, Pa[6], blockSize2, i, j + blockSize2, i + blockSize2, j + blockSize2);
+    MY_MSumBlock(b, b, Pb[6], blockSize2, i + blockSize2, j, i + blockSize2, j + blockSize2);
 
     /* recursively call the function */
     for (k = 0; k < 7; k++)
@@ -189,9 +192,9 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
      * | Pc[0]+Pc[3]-Pc[4]+Pc[6] |      Pc[2]+Pc[4]        |
      * |      Pc[1]+Pc[4]        | Pc[0]-Pc[1]+Pc[2]+Pc[5] |
      */
-    for (k = 0; k < blockSize; k++)
+    for (k = 0; k < blockSize2; k++)
     {
-      for (l = 0; l < blockSize; l++)
+      for (l = 0; l < blockSize2; l++)
       {
         c[i + k][j + l] = Pc[0][k][l] + Pc[3][k][l] - Pc[4][k][l] + Pc[6][k][l];
         c[i + k][j + l + blockSize2] = Pc[2][k][l] + Pc[4][k][l];
@@ -199,8 +202,10 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
         c[i + k + blockSize2][j + l + blockSize2] = Pc[0][k][l] - Pc[1][k][l] + Pc[2][k][l] + Pc[5][k][l];
       }
     }
-    for (k = 0; k < 7; k++) {
-      for (l = 0; l < blockSize / 2; l++) {
+    for (k = 0; k < 7; k++)
+    {
+      for (l = 0; l < blockSize2; l++)
+      {
         free(Pa[k][l]);
         free(Pb[k][l]);
         free(Pc[k][l]);
@@ -215,6 +220,7 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
   }
 }
 
-void MY_MMult(double** a, double** b, double** c, int blockSize, int threshold) {
+void MY_MMult(double **a, double **b, double **c, int blockSize, int threshold)
+{
   MY_MMultBlockStrassen(a, b, c, blockSize, 0, 0, threshold);
 }
