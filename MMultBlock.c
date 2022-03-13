@@ -1,9 +1,12 @@
 void MY_MMultBlock(double **a, double **b, double **c, int blockSize, int i, int j)
 {
   /* multiply a block of size blockSize x blockSize of a and b and store the result in c */
-  if (blockSize == 1)
+  if (blockSize == 2)
   {
-    c[i][j] = a[i][j] * b[i][j];
+    c[i][j] = a[i][j] * b[i][j] + a[i][j + 1] * b[i + 1][j];
+    c[i][j + 1] = a[i][j] * b[i][j + 1] + a[i][j + 1] * b[i + 1][j + 1];
+    c[i + 1][j] = a[i + 1][j] * b[i][j] + a[i + 1][j + 1] * b[i + 1][j];
+    c[i + 1][j + 1] = a[i + 1][j] * b[i][j + 1] + a[i + 1][j + 1] * b[i + 1][j + 1];
   }
   else
   {
