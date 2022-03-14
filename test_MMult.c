@@ -5,9 +5,9 @@
 
 #include "parameters.h"
 
-void REF_MMult(int, int, int, double **, int, double **, int, double **, int);
-void MY_MMult(double **, double **, double **, int, int);
-void copy_matrix(int, int, double **, int, double **, int);
+void REF_MMult(int, int, int, double **, int, double **, int, double **, int );
+void MY_MMult(double **, double **, double **, int, int, long long *, long long*);
+void copy_matrix(int, int, double **, int, double **, int );
 void random_matrix(int, int, double **, int);
 double compare_matrices(int, int, double **, int, double **, int);
 void print_matrix(int m, int n, double **a, int lda);
@@ -22,19 +22,18 @@ int main()
       rep;
 
   double
-      dtime,
-      dtime_best,
-      gflops,
-      diff;
+    dtime, dtime_best,        
+    gflops, 
+    diff;
 
-  double
-      **a,
-      **b, **c, **cref, **cold;
+  double 
+    **a, **b, **c, **cref, **cold;
+
+  long long mult_count, add_count;
 
   printf("MY_MMult = [\n");
 
-  for (l = 2; l <= pow(2, LLAST); l *= 2)
-  {
+  for ( l=2; l<=pow(2, LLAST); l *=2 ){
     m = l;
     n = l;
     k = l;
@@ -95,7 +94,9 @@ int main()
 
       /* Time your implementation */
       dtime = dclock();
-      MY_MMult(a, b, c, l, THRESHOLD);
+
+      MY_MMult( a, b, c, l, THRESHOLD, &mult_count, &add_count);
+      
       dtime = dclock() - dtime;
 
       if (rep == 0)
@@ -110,8 +111,8 @@ int main()
 
     diff = compare_matrices(m, n, c, ldc, cref, ldc);
 
-    printf("%d %le %le \n", l, dtime_best, diff);
-    fflush(stdout);
+    printf("%d %le %le %ld %ld \n", l, dtime_best, diff, mult_count, add_count);
+    fflush( stdout );
 
     for (int i = 0; i < lda; i++)
     {

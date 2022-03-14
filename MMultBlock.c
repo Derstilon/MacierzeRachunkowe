@@ -1,5 +1,8 @@
 #include <stdlib.h>
 
+int mult_count = 0;
+int add_sub_count = 0;
+
 void MY_MSumBlock(double **a, double **b, double **c, int blockSize, int ia, int ja, int ib, int jb)
 {
   int k, l;
@@ -10,6 +13,7 @@ void MY_MSumBlock(double **a, double **b, double **c, int blockSize, int ia, int
       c[k][l] = a[ia + k][ja + l] + b[ib + k][jb + l];
     }
   }
+  add_sub_count += blockSize * blockSize;
 }
 
 void MY_MSubstractBlock(double **a, double **b, double **c, int blockSize, int ia, int ja, int ib, int jb)
@@ -22,6 +26,7 @@ void MY_MSubstractBlock(double **a, double **b, double **c, int blockSize, int i
       c[k][l] = a[ia + k][ja + l] - b[ib + k][jb + l];
     }
   }
+  add_sub_count += blockSize * blockSize;
 }
 
 void MY_MCopyBlock(double **a, double **b, int blockSize, int ia, int ja,
@@ -45,10 +50,12 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize, int i
   /* multiply a block of size blockSize x blockSize of a and b and store the result in c */
   if (blockSize == 2)
   {
-    c[0][0] = a[ia][ja] * b[ib][jb] + a[ia][ja + 1] * b[ib + 1][jb];
-    c[0][1] = a[ia][ja] * b[ib][jb + 1] + a[ia][ja + 1] * b[ib + 1][jb + 1];
-    c[1][0] = a[ia + 1][ja] * b[ib][jb] + a[ia + 1][ja + 1] * b[ib + 1][jb];
-    c[1][1] = a[ia + 1][ja] * b[ib][jb + 1] + a[ia + 1][ja + 1] * b[ib + 1][jb + 1];
+    c[0][0] = a[ia][ja] * b[ib][jb] + a[ia][ja+1] * b[ib+1][jb];
+    c[0][1] = a[ia][ja] * b[ib][jb + 1] + a[ia][ja+1] * b[ib+1][jb+1];
+    c[1][0] = a[ia + 1][ja] * b[ib][jb] + a[ia+1][ja+1] * b[ib+1][jb];
+    c[1][1] = a[ia + 1][ja] * b[ib][jb+1] + a[ia + 1][ja + 1] * b[ib+1][jb+1];
+    mult_count += 8;
+    add_sub_count += 4;
   }
   else
   {
@@ -198,6 +205,7 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
         c[i + k + blockSize2][j + l + blockSize2] = Pc[0][k][l] - Pc[1][k][l] + Pc[2][k][l] + Pc[5][k][l];
       }
     }
+    add_sub_count += 8 * blockSize2 * blockSize2;
     for (k = 0; k < 7; k++)
     {
       for (l = 0; l < blockSize2; l++)
@@ -216,7 +224,9 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
   }
 }
 
-void MY_MMult(double **a, double **b, double **c, int blockSize, int threshold)
+void MY_MMult(double **a, double **b, double **c, int blockSize, int threshold, long long* num_mult, long long* num_add)
 {
   MY_MMultBlockStrassen(a, b, c, blockSize, 0, 0, threshold);
+  *num_mult = mult_count;
+  *num_add = add_sub_count;
 }
