@@ -25,7 +25,8 @@ void MY_MSubstractBlock(double **a, double **b, double **c, int blockSize, int i
 }
 
 void MY_MCopyBlock(double **a, double **b, int blockSize, int ia, int ja,
-                   int ib, int jb) {
+                   int ib, int jb)
+{
   int k, l;
   for (k = 0; k < blockSize; k++)
   {
@@ -44,10 +45,10 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize, int i
   /* multiply a block of size blockSize x blockSize of a and b and store the result in c */
   if (blockSize == 2)
   {
-    c[0][0] = a[ia][ja] * b[ib][jb] + a[ia][ja+1] * b[ib+1][jb];
-    c[0][1] = a[ia][ja] * b[ib][jb + 1] + a[ia][ja+1] * b[ib+1][jb+1];
-    c[1][0] = a[ia + 1][ja] * b[ib][jb] + a[ia+1][ja+1] * b[ib+1][jb];
-    c[1][1] = a[ia + 1][ja] * b[ib][jb+1] + a[ia + 1][ja + 1] * b[ib+1][jb+1];
+    c[0][0] = a[ia][ja] * b[ib][jb] + a[ia][ja + 1] * b[ib + 1][jb];
+    c[0][1] = a[ia][ja] * b[ib][jb + 1] + a[ia][ja + 1] * b[ib + 1][jb + 1];
+    c[1][0] = a[ia + 1][ja] * b[ib][jb] + a[ia + 1][ja + 1] * b[ib + 1][jb];
+    c[1][1] = a[ia + 1][ja] * b[ib][jb + 1] + a[ia + 1][ja + 1] * b[ib + 1][jb + 1];
   }
   else
   {
@@ -57,10 +58,10 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize, int i
     Pc = (double ***)malloc(4 * sizeof(double **));
     for (k = 0; k < 4; k++)
     {
-      Pa[k] = (double **)malloc(4 * sizeof(double *));
-      Pb[k] = (double **)malloc(4 * sizeof(double *));
-      Pc[k] = (double **)malloc(4 * sizeof(double *));
-      for (l = 0; l < 4; l++)
+      Pa[k] = (double **)malloc(blockSize2 * sizeof(double *));
+      Pb[k] = (double **)malloc(blockSize2 * sizeof(double *));
+      Pc[k] = (double **)malloc(blockSize2 * sizeof(double *));
+      for (l = 0; l < blockSize2; l++)
       {
         Pa[k][l] = (double *)malloc(blockSize2 * sizeof(double));
         Pb[k][l] = (double *)malloc(blockSize2 * sizeof(double));
@@ -103,7 +104,7 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize, int i
     MY_MCopyBlock(Pc[3], c, blockSize2, 0, 0, blockSize2, blockSize2);
     for (k = 0; k < 4; k++)
     {
-      for (l = 0; l < 4; l++)
+      for (l = 0; l < blockSize2; l++)
       {
         free(Pa[k][l]);
         free(Pb[k][l]);
