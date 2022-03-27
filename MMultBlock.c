@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-int mult_count = 0;
-int add_sub_count = 0;
+long long mult_count = 0;
+long long add_sub_count = 0;
 
 void MY_MSumBlock(double **a, double **b, double **c, int blockSize, int ia, int ja, int ib, int jb)
 {
@@ -81,8 +81,8 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize, int i
     MY_MMultBlockBinet(a, b, Pa[0], blockSize2, ia, ja, ib, jb);
     MY_MMultBlockBinet(a, b, Pb[0], blockSize2, ia, ja + blockSize2, ib + blockSize2, jb);
 
-    //(A11*B21) + (A12*B22)
-    MY_MMultBlockBinet(a, b, Pa[1], blockSize2, ia, ja, ib + blockSize2, jb);
+    //(A11*B12) + (A12*B22)
+    MY_MMultBlockBinet(a, b, Pa[1], blockSize2, ia, ja, ib, jb + blockSize2);
     MY_MMultBlockBinet(a, b, Pb[1], blockSize2, ia, ja + blockSize2, ib + blockSize2, jb + blockSize2);
 
     //(A21*B11) + (A22*B21)
@@ -166,7 +166,7 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
     MY_MCopyBlock(b, Pb[1], blockSize2, i, j, 0, 0);
 
     // A11 * (B12-B22)
-    MY_MCopyBlock(a, Pa[2], blockSize2, i, j + blockSize2, 0, 0);
+    MY_MCopyBlock(a, Pa[2], blockSize2, i, j, 0, 0);
     MY_MSubstractBlock(b, b, Pb[2], blockSize2, i, j + blockSize2, i + blockSize2, j + blockSize2);
 
     // A22 * (B21-B11)

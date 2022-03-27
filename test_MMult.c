@@ -104,10 +104,15 @@ int main()
       else
         dtime_best = (dtime < dtime_best ? dtime : dtime_best);
     }
+    // printf("\n==================\n");
     // print_matrix(m, n, a, lda);
+    // printf("\n==================\n");
     // print_matrix(m, n, b, lda);
+    // printf("\n==================\n");
     // print_matrix(m, n, c, lda);
+    // printf("\n==================\n");
     // print_matrix(m, n, cref, lda);
+    // printf("\n==================\n");
 
     diff = compare_matrices(m, n, c, ldc, cref, ldc);
 

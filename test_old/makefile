@@ -1,4 +1,4 @@
-OLD  := MMult0
+OLD  := REF_MMult
 NEW  := MMult0
 #
 # sample makefile
