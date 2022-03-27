@@ -116,7 +116,7 @@ int main()
 
     diff = compare_matrices(m, n, c, ldc, cref, ldc);
 
-    printf("%d %le %le %ld %ld \n", l, dtime_best, diff, mult_count, add_count);
+    printf("%d %le %le %lld %lld \n", l, dtime_best, diff, mult_count, add_count);
     fflush( stdout );
 
     for (int i = 0; i < lda; i++)
