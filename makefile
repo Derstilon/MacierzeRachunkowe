@@ -40,6 +40,15 @@ run:
 	cp output_$(OLD).m output_old.m
 	cp output_$(NEW).m output_new.m
 
+test_invers_matrix.x: $(UTIL) parameters.h invers_matrix.o test_invers_matrix.o MMultBlock.o
+	$(LINKER) $(UTIL) invers_matrix.o test_invers_matrix.o MMultBlock.o $(LDFLAGS) \
+        $(BLAS_LIB) -o $(TEST_BIN) $@ 
+
+run_invers:
+	make clean;
+	make test_invers_matrix.x
+	./test_invers_matrix.x > inverse_matrix.m
+
 clean:
 	rm -f *.o *~ core *.x
 

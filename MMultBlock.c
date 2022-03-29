@@ -13,7 +13,7 @@ void MY_MSumBlock(double **a, double **b, double **c, int blockSize, int ia, int
       c[k][l] = a[ia + k][ja + l] + b[ib + k][jb + l];
     }
   }
-  add_sub_count += blockSize * blockSize;
+  // add_sub_count += blockSize * blockSize;
 }
 
 void MY_MSubstractBlock(double **a, double **b, double **c, int blockSize, int ia, int ja, int ib, int jb)
@@ -26,18 +26,24 @@ void MY_MSubstractBlock(double **a, double **b, double **c, int blockSize, int i
       c[k][l] = a[ia + k][ja + l] - b[ib + k][jb + l];
     }
   }
-  add_sub_count += blockSize * blockSize;
+  // add_sub_count += blockSize * blockSize;
 }
 
 void MY_MCopyBlock(double **a, double **b, int blockSize, int ia, int ja,
-                   int ib, int jb)
+                   int ib, int jb, int inverse)
 {
   int k, l;
-  for (k = 0; k < blockSize; k++)
-  {
-    for (l = 0; l < blockSize; l++)
-    {
-      b[ib + k][jb + l] = a[ia + k][ja + l];
+  if (inverse == 0) {
+    for (k = 0; k < blockSize; k++) {
+      for (l = 0; l < blockSize; l++) {
+        b[ib + k][jb + l] = a[ia + k][ja + l];
+      }
+    }
+  } else {
+    for (k = 0; k < blockSize; k++) {
+      for (l = 0; l < blockSize; l++) {
+        b[ib + k][jb + l] = -a[ia + k][ja + l];
+      }
     }
   }
 }
@@ -97,6 +103,7 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize, int i
     for (k = 0; k < 4; k++)
     {
       MY_MSumBlock(Pa[k], Pb[k], Pc[k], blockSize2, 0, 0, 0, 0);
+      add_sub_count += blockSize2 * blockSize2;
     }
 
     /*
@@ -105,10 +112,10 @@ void MY_MMultBlockBinet(double **a, double **b, double **c, int blockSize, int i
      * | Pc[0] | Pc[1] |
      * | Pc[2] | Pc[3] |
      */
-    MY_MCopyBlock(Pc[0], c, blockSize2, 0, 0, 0, 0);
-    MY_MCopyBlock(Pc[1], c, blockSize2, 0, 0, 0, blockSize2);
-    MY_MCopyBlock(Pc[2], c, blockSize2, 0, 0, blockSize2, 0);
-    MY_MCopyBlock(Pc[3], c, blockSize2, 0, 0, blockSize2, blockSize2);
+    MY_MCopyBlock(Pc[0], c, blockSize2, 0, 0, 0, 0, 0);
+    MY_MCopyBlock(Pc[1], c, blockSize2, 0, 0, 0, blockSize2, 0);
+    MY_MCopyBlock(Pc[2], c, blockSize2, 0, 0, blockSize2, 0, 0);
+    MY_MCopyBlock(Pc[3], c, blockSize2, 0, 0, blockSize2, blockSize2, 0);
     for (k = 0; k < 4; k++)
     {
       for (l = 0; l < blockSize2; l++)
@@ -160,30 +167,40 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
     //(A11+A22) * (B11+B22)
     MY_MSumBlock(a, a, Pa[0], blockSize2, i, j, i + blockSize2, j + blockSize2);
     MY_MSumBlock(b, b, Pb[0], blockSize2, i, j, i + blockSize2, j + blockSize2);
+    add_sub_count += blockSize2 * blockSize2;
+    add_sub_count += blockSize2 * blockSize2;
 
     //(A21+A22) * B11
     MY_MSumBlock(a, a, Pa[1], blockSize2, i + blockSize2, j, i + blockSize2, j + blockSize2);
-    MY_MCopyBlock(b, Pb[1], blockSize2, i, j, 0, 0);
+    add_sub_count += blockSize2 * blockSize2;
+    MY_MCopyBlock(b, Pb[1], blockSize2, i, j, 0, 0, 0);
 
     // A11 * (B12-B22)
-    MY_MCopyBlock(a, Pa[2], blockSize2, i, j, 0, 0);
+    MY_MCopyBlock(a, Pa[2], blockSize2, i, j, 0, 0, 0);
     MY_MSubstractBlock(b, b, Pb[2], blockSize2, i, j + blockSize2, i + blockSize2, j + blockSize2);
+    add_sub_count += blockSize2 * blockSize2;
 
     // A22 * (B21-B11)
-    MY_MCopyBlock(a, Pa[3], blockSize2, i + blockSize2, j + blockSize2, 0, 0);
+    MY_MCopyBlock(a, Pa[3], blockSize2, i + blockSize2, j + blockSize2, 0, 0, 0);
     MY_MSubstractBlock(b, b, Pb[3], blockSize2, i + blockSize2, j, i, j);
+    add_sub_count += blockSize2 * blockSize2;
 
     //(A11+A12) * B22
     MY_MSumBlock(a, a, Pa[4], blockSize2, i, j, i, j + blockSize2);
-    MY_MCopyBlock(b, Pb[4], blockSize2, i + blockSize2, j + blockSize2, 0, 0);
+    add_sub_count += blockSize2 * blockSize2;
+    MY_MCopyBlock(b, Pb[4], blockSize2, i + blockSize2, j + blockSize2, 0, 0, 0);
 
     //(A21-A11) * (B11+B12)
     MY_MSubstractBlock(a, a, Pa[5], blockSize2, i + blockSize2, j, i, j);
     MY_MSumBlock(b, b, Pb[5], blockSize2, i, j, i, j + blockSize2);
+    add_sub_count += blockSize2 * blockSize2;
+    add_sub_count += blockSize2 * blockSize2;
 
     //(A12-A22) * (B21+B22)
     MY_MSubstractBlock(a, a, Pa[6], blockSize2, i, j + blockSize2, i + blockSize2, j + blockSize2);
     MY_MSumBlock(b, b, Pb[6], blockSize2, i + blockSize2, j, i + blockSize2, j + blockSize2);
+    add_sub_count += blockSize2 * blockSize2;
+    add_sub_count += blockSize2 * blockSize2;
 
     /* recursively call the function */
     for (k = 0; k < 7; k++)

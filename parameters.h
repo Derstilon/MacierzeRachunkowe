@@ -21,6 +21,7 @@ the best time from these repeats is used to compute the performance
 */
 
 #define NREPEATS 2
+#define EPS 1e-3
 
 /*
 Matrices A, B, and C are stored in two dimensional arrays with
