@@ -243,6 +243,8 @@ void MY_MMultBlockStrassen(double **a, double **b, double **c, int blockSize, in
 
 void MY_MMult(double **a, double **b, double **c, int blockSize, int threshold, long long* num_mult, long long* num_add)
 {
+  mult_count = 0;
+  add_sub_count = 0;
   MY_MMultBlockStrassen(a, b, c, blockSize, 0, 0, threshold);
   *num_mult = mult_count;
   *num_add = add_sub_count;

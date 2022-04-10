@@ -104,6 +104,8 @@ void inverse_matrix_inner(double **a, double **a_inv, int size) {
 }
 
 void inverse_matrix(double **a, double **a_inv, int size, long long *num_mult, long long *num_add) {
+    mult_count_inv = 0;
+    add_sub_count_inv = 0;
     inverse_matrix_inner(a, a_inv, size);
     *num_mult = mult_count_inv;
     *num_add = add_sub_count_inv;
