@@ -1,0 +1,20 @@
+OdwracanieBlokowe = function(A, A_odw, rozmiar):
+    [[A11, A12], [A21, A22]] = A
+    [[A11_odw, A12_odw], [A21_odw, A22_odw]] = A_odw
+
+    jeżeli rozmiar == 2 ?
+        A11_odw =  1/det(A) * A11
+        A12_odw = -1/det(A) * A12
+        A21_odw = -1/det(A) * A21
+        A22_odw =  1/det(A) * A22
+    w przeciwnym wypadku:
+        OdwracanieBlokowe(A11, A11_odw, rozmiar/2)
+        S22 = A22 - A21*A11_odw*A22
+        OdwracanieBlokowe(S22, S22_odw, rozmiar/2)
+
+        A11_odw = A11 + A11_odw*A12*S22_odw*A21*A11_odw
+        A12_odw = - A11_odw*A12*S22_odw
+        A21_odw = -S22_odw*A21*A11_odw
+        A22_odw = S22_odw
+
+    A_odw = [[A11_odw, A12_odw], [A21_odw, A22_odw]]

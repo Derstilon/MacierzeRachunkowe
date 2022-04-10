@@ -1,10 +1,9 @@
 
-void copy_matrix( int m, int n, double **a, int lda, double **b, int ldb )
+void copy_matrix(int m, int n, double **a, int lda, double **b, int ldb)
 {
-  int i, j;
+   int i, j;
 
-  for ( j=0; j<n; j++ )
-    for ( i=0; i<m; i++ )
-      b[i][j] = a[i][j];
+   for (j = 0; j < n; j++)
+      for (i = 0; i < m; i++)
+         b[i][j] = a[i][j];
 }
-

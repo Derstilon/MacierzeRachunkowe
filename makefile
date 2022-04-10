@@ -44,10 +44,19 @@ test_invers_matrix.x: $(UTIL) parameters.h invers_matrix.o test_invers_matrix.o 
 	$(LINKER) $(UTIL) invers_matrix.o test_invers_matrix.o MMultBlock.o $(LDFLAGS) \
         $(BLAS_LIB) -o $(TEST_BIN) $@ 
 
+test_factorization.x: $(UTIL) parameters.h lu_factorization.o test_factorization.o invers_matrix.o MMultBlock.o
+	$(LINKER) $(UTIL) lu_factorization.o test_factorization.o invers_matrix.o MMultBlock.o $(LDFLAGS) \
+		$(BLAS_LIB) -o $(TEST_BIN) $@
+
 run_invers:
 	make clean;
 	make test_invers_matrix.x
 	./test_invers_matrix.x > inverse_matrix.m
+
+run_factor:
+	make clean;
+	make test_factorization.x
+	./test_factorization.x > factorization.m
 
 clean:
 	rm -f *.o *~ core *.x
