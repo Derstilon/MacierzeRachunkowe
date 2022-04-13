@@ -7,9 +7,10 @@ double compare_matrices(int m, int n, double **a, int lda, double **b, int ldb)
 
    for (i = 0; i < m; i++)
    {
-      for (j = 0; j < n; j++)
+      for (j = 0; j < n; j++){
          diff = abs(a[i][j] - b[i][j]);
-      max_diff = (diff > max_diff ? diff : max_diff);
+         max_diff = (diff > max_diff ? diff : max_diff);
+      }
    }
 
    return max_diff;

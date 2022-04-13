@@ -62,9 +62,9 @@ int main()
       }
 
       /// Error check
-      // print_matrix(l, l, a, l);
-      // print_matrix(l, l, a_inv, l);
-
+      // print_matrix(len, len, a, len);
+      // print_matrix(len, len, l, len);
+      // print_matrix(len, len, u, len);
       MY_MMult(l, u, a_prim, len, 8, &tmp_mult_count, &tmp_add_count);
       // print_matrix(l, l, b, l);
       status = 1;
@@ -72,8 +72,11 @@ int main()
       status = 1;
       if (compare_matrices(len, len, a, 0, a_prim, 0) > EPS)
          status = 0;
-
-      printf("%d %d %le %lld %lld\n", len, status, best_time, mult_count / NREPEATS, add_count / NREPEATS);
+      
+      double det = 1;
+      for(i=0;i<len;i++) det *= u[i][i];
+      printf("%d %d %le %lld %lld %lf\n", len, status, best_time, mult_count, add_count, det);
+      //print_matrix(len, len, a, len);
       fflush(stdout);
 
       for (i = 0; i < len; i++)

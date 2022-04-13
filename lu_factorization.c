@@ -28,17 +28,19 @@
    COPY_BLOCK(source, destination, 0, 0, i, j, 0)
 
 #define SUBSTRACT_MATRIX(a, i, j, b, c)                      \
-   MY_MSubstractBlock(a, b, c, i *size2, j *size2, 0, 0, 0); \
+   MY_MSubstractBlock(a, b, c, size2, i *size2, j *size2, 0, 0); \
    add_sub_count_lu += size2 * size2
 
 #define LU_FACTOR(matrix) \
-   lu_factorization(matrix, l_tmp, u_tmp, size2, &tmp_mult, &tmp_add)
+   lu_factorization_inner(matrix, l_tmp, u_tmp, size2); \
+   for (i = 0;i<size2;i++) {for (j=i+1;j<size2;j++){l_tmp[i][j]=0;u_tmp[j][i]=0;}}
 
 void MY_MMult(double **, double **, double **, int, int, long long *, long long *);
 void MY_MCopyBlock(double **, double **, int, int, int, int, int, int);
 void MY_MSubstractBlock(double **, double **, double **, int, int, int, int, int);
 void MY_MSumBlock(double **, double **, double **, int, int, int, int, int);
 void inverse_matrix(double **, double **, int, long long *, long long *);
+void print_matrix(int, int, double **, int);
 
 long long mult_count_lu = 0;
 long long add_sub_count_lu = 0;
@@ -60,7 +62,7 @@ void lu_factorization_inner(double **a, double **l, double **u, int size)
    }
    else
    {
-      int i;
+      int i, j;
       long long tmp_mult = 0, tmp_add = 0;
       int size2 = size / 2;
 
@@ -89,12 +91,11 @@ void lu_factorization_inner(double **a, double **l, double **u, int size)
       }
       /*************** L11 | U11 ***************/
       LU_FACTOR(a);
-      PASTE_MATRIX(l, l_tmp, 0, 0);
-      PASTE_MATRIX(u, u_tmp, 0, 0);
+      PASTE_MATRIX(l_tmp, l, 0, 0);
+      PASTE_MATRIX(u_tmp, u, 0, 0);
 
       /****************** L21 ******************/
       INVERSE_MATRIX(u);
-
       COPY_MATRIX(a, a_tmp, 1, 0);
       COPY_MATRIX(u_inv, u_inv_tmp, 0, 0);
       MULTIPLY_MATRIX(a_tmp, u_inv, l_tmp);
@@ -111,18 +112,21 @@ void lu_factorization_inner(double **a, double **l, double **u, int size)
 
       /******************* S *******************/
       COPY_MATRIX(a, a_tmp, 1, 0);
-      COPY_MATRIX(u_inv, u_inv_tmp, 0, 0);
-      MULTIPLY_MATRIX(a_tmp, u_inv, s_tmp1);
-      COPY_MATRIX(l_inv, l_inv_tmp, 0, 0);
-      MULTIPLY_MATRIX(s_tmp1, l_inv, s_tmp2);
+      // COPY_MATRIX(u_inv, u_inv_tmp, 0, 0);
+      MULTIPLY_MATRIX(a_tmp, u_inv_tmp, s_tmp1);
+      // COPY_MATRIX(l_inv, l_inv_tmp, 0, 0);
+      MULTIPLY_MATRIX(s_tmp1, l_inv_tmp, s_tmp2);
       COPY_MATRIX(a, a_tmp, 0, 1);
       MULTIPLY_MATRIX(s_tmp2, a_tmp, s_tmp1);
       SUBSTRACT_MATRIX(a, 1, 1, s_tmp1, s_tmp2);
 
       /*************** L22 | U22 ***************/
       LU_FACTOR(s_tmp2);
+
       PASTE_MATRIX(u_tmp, u, 1, 1);
       PASTE_MATRIX(l_tmp, l, 1, 1);
+
+      for (i = 0;i<size;i++) {for (j=i+1;j<size;j++){l[i][j]=0;u[j][i]=0;}}
 
       for (i = 0; i < size; i++)
       {
@@ -150,6 +154,8 @@ void lu_factorization_inner(double **a, double **l, double **u, int size)
 
 void lu_factorization(double **a, double **l, double **u, int size, long long *num_mult, long long *num_add)
 {
+   mult_count_lu = 0;
+   add_sub_count_lu = 0;
    lu_factorization_inner(a, l, u, size);
    *num_mult = mult_count_lu;
    *num_add = add_sub_count_lu;

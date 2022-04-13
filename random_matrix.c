@@ -2,6 +2,7 @@
 
 void random_matrix(int m, int n, double **a, int lda)
 {
+   srand48(2);
    double drand48();
    int i, j;
 
